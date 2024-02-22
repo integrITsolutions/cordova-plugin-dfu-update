@@ -3,8 +3,8 @@
     <name>DFU Update</name>
     <description>Use Nordic Semiconductor's Device Firmware Update (DFU) service to update a Bluetooth LE device</description>
 
-    <repo>https://github.com/EinfachHans/cordova-plugin-dfu-update.git</repo>
-    <issue>https://github.com/EinfachHans/cordova-plugin-dfu-update/issues</issue>
+    <repo>https://github.com/integrITsolutions/cordova-plugin-dfu-update.git</repo>
+    <issue>https://github.com/integrITsolutions/cordova-plugin-dfu-update/issues</issue>
 
     <license>MIT</license>
 
