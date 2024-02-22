@@ -46,7 +46,7 @@ This Plugin is developed in Swift and automaticaly adds the Plugin to [Support S
 
 ## Android
 
-- ANDROID_NORDIC_VERSION - Version of `no.nordicsemi.android:dfu` / default to `1.11.0` 
+- ANDROID_NORDIC_VERSION - Version of `no.nordicsemi.android:dfu` / default to `1.12.0` 
 
 ## iOS
 
