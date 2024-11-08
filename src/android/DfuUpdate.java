@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.app.Service;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
@@ -36,7 +37,9 @@ public class DfuUpdate extends CordovaPlugin {
 	private String fileURL;
 	private final String COARSE = Manifest.permission.ACCESS_COARSE_LOCATION;
 	private final String BLUETOOTH = Manifest.permission.BLUETOOTH;
-	private final String [] permissions = { COARSE, BLUETOOTH};
+	private final String BLUETOOTH_CONNECT = Manifest.permission.BLUETOOTH_CONNECT;
+	private final String [] permissions = { COARSE, BLUETOOTH, BLUETOOTH_CONNECT };
+
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -93,7 +96,7 @@ public class DfuUpdate extends CordovaPlugin {
 	}
 
 	private boolean hasPerms() {
-		return cordova.hasPermission(COARSE) && cordova.hasPermission(BLUETOOTH);
+		return cordova.hasPermission(COARSE) && (cordova.hasPermission(BLUETOOTH) || cordova.hasPermission(BLUETOOTH_CONNECT));
 	}
 
 
@@ -113,20 +116,33 @@ public class DfuUpdate extends CordovaPlugin {
 					.setPacketsReceiptNotificationsEnabled(true)
 					.setPacketsReceiptNotificationsValue(packetReceiptNotificationsValue)
 					.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true)
-					.setDisableNotification(true);
+					.setDisableNotification(false);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+				starter.setForegroundService(true);
+			}
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				if (Build.VERSION.SDK_INT >= 34) { // Android 14
+					starter.setForegroundServiceType(0x00000010); // FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+				} else {
+					starter.setForegroundServiceType(Service.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
+				}
+			}
+
 			starter.setZip(fileUriStr);
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				DfuServiceInitiator.createDfuNotificationChannel(cordova.getContext());
 			}
 
-			starter.start(activity, DfuService.class);
+				starter.start(activity, DfuService.class);
 
-			PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-			result.setKeepCallback(true);
-			dfuCallback.sendPluginResult(result);
+				PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+				result.setKeepCallback(true);
+				dfuCallback.sendPluginResult(result);
 
-			DfuServiceListenerHelper.registerProgressListener(activity, progressListener);
+				DfuServiceListenerHelper.registerProgressListener(activity, progressListener);
 		});
 
 	}
@@ -191,6 +207,7 @@ public class DfuUpdate extends CordovaPlugin {
 
 		@Override
 		public void onError(String deviceAddress, int error, int errorType, String message) {
+			Log.e(TAG, "DFU Error: " + message + " (error: " + error + ", type: " + errorType + ")");
 			JSONObject json = new JSONObject();
 			try {
 				json.put("id", deviceAddress);
@@ -198,7 +215,7 @@ public class DfuUpdate extends CordovaPlugin {
 				json.put("errorType", errorType);
 				json.put("message", message);
 			} catch (JSONException e) {
-				//squelch
+				Log.e(TAG, "JSON Error: " + e.getMessage());
 			}
 			dfuCallback.error(json);
 			unregisterDfuProgressListener();

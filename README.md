@@ -10,7 +10,7 @@ It currently uses [iOSDFULibrary](https://cocoapods.org/pods/iOSDFULibrary) (Ver
 **This Plugin is in active development!**
 
 <!-- DONATE -->
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LMX5TSQVMNMU6&source=url)
+
 
 This and other Open-Source Cordova Plugins are developed in my free time.
 To help ensure this plugin is kept updated, new features are added and bugfixes are implemented quickly, please donate a couple of dollars (or a little more if you can stretch) as this will help me to afford to dedicate time to its maintenance.
@@ -46,7 +46,7 @@ This Plugin is developed in Swift and automaticaly adds the Plugin to [Support S
 
 ## Android
 
-- ANDROID_NORDIC_VERSION - Version of `no.nordicsemi.android:dfu` / default to `1.11.0` 
+- ANDROID_NORDIC_VERSION - Version of `no.nordicsemi.android:dfu` / default to `1.12.0` 
 
 ## iOS
 
